@@ -1,6 +1,6 @@
 import express from "express" 
 import bodyParser from "body-parser"
-import fs, { write } from "node:fs"
+import fs from "node:fs"
 
 const app = express()
 const port = 3000
@@ -8,7 +8,7 @@ const port = 3000
 const csvExiste = () => {
   if (!fs.existsSync("./dados_arcomp.csv")) {
     let linhaHeaders = []
-    let headers = ["data", "leitura", "\n"]
+    let headers = ["data", "hora", "leitura", "\n"]
     linhaHeaders.push(headers.join(","))
 
     linhaHeaders = Buffer.from(linhaHeaders[0])
@@ -23,11 +23,13 @@ const csvExiste = () => {
 
 const addDadosSensor = (leituraSensor) => {
   if (csvExiste()) {
-    let data = new Date()
+    let dataObj = new Date()
+    let data = String(dataObj.getDate()) + "/" + String(dataObj.getMonth() + 1) + "/" + String(dataObj.getFullYear())
+    let hora = String(dataObj.getHours()) + ":" + String(dataObj.getMinutes()) + ":" + String(dataObj.getSeconds())
     let leitura = leituraSensor["sensor"]
 
     let linhaCsv = []
-    linhaCsv.push([data, leitura, "\n"].join(","))
+    linhaCsv.push([data, hora, leitura, "\n"].join(","))
 
     linhaCsv = Buffer.from(linhaCsv[0])
 
