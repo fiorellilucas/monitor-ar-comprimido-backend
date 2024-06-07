@@ -26,7 +26,9 @@ const addDadosSensor = (leituraSensor) => {
     let dataObj = new Date()
     let data = String(dataObj.getDate()) + "/" + String(dataObj.getMonth() + 1) + "/" + String(dataObj.getFullYear())
     let hora = String(dataObj.getHours()) + ":" + String(dataObj.getMinutes()) + ":" + String(dataObj.getSeconds())
+
     let leitura = leituraSensor["sensor"]
+    leitura = converterParaPressao(leitura / 1000)
 
     let linhaCsv = []
     linhaCsv.push([data, hora, leitura, "\n"].join(","))
@@ -40,6 +42,10 @@ const addDadosSensor = (leituraSensor) => {
   }
 }
 
+const converterParaPressao = (leituraSensor) => {
+  return ((leituraSensor - 0.3) / 0.27)
+}
+
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get("/", async (req, res) => {
@@ -48,7 +54,6 @@ app.get("/", async (req, res) => {
 
 app.post("/leitura", async (req, res) => {
   let leituraSensor = req.body
-
   addDadosSensor(leituraSensor)
 
   res.sendStatus(200)
